@@ -4,8 +4,9 @@
 the url structure of website
 """
 
-from handlers.index import IndexHandler    #假设已经有了
+from handlers import index, user
 
 url = [
-    (r'/', IndexHandler),
+    (r'/', index.IndexHandler),
+    (r'/user/(w+)', user.UserHandler)
 ]
