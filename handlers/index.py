@@ -1,8 +1,10 @@
-from tornado.web import RequestHandler
+from tornado import escape
+
+from handlers.base import BaseHandler
 from methods import readdb
 
 
-class IndexHandler(RequestHandler):
+class IndexHandler(BaseHandler):
     def get(self):
         usernames = readdb.select_columns(table="users", column="username")
         one_user = usernames[0][0]
@@ -15,9 +17,20 @@ class IndexHandler(RequestHandler):
         if user_infos:
             db_pwd = user_infos[0][2]
             if db_pwd == password:
-                self.set_secure_cookie(username, db_pwd, httponly=True, secure=True)
+                self.set_current_user(username)  # 将当前用户名写入 cookie，方法见下面
                 self.write(username)
             else:
-                self.write("your password was not right.")
+                self.write("-1")
         else:
-            self.write("There is no thi user.")
+            self.write("-1")
+
+    def set_current_user(self, user):
+        if user:
+            self.set_secure_cookie('user', escape.json_encode(user))
+        else:
+            self.clear_cookie("user")
+
+
+class ErrorHandler(BaseHandler):  # 增加了一个专门用来显示错误的页面
+    def get(self):  # 但是后面不单独讲述，读者可以从源码中理解
+        self.render("error.html")

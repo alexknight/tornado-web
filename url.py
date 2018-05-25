@@ -4,9 +4,10 @@
 the url structure of website
 """
 
-from handlers import index, user
+from handlers import index, user, sleep
 
 url = [
     (r'/', index.IndexHandler),
-    (r'/user/(w+)', user.UserHandler)
+    (r'/user', user.UserHandler),
+    (r'/sleep', sleep.SleepHandler)
 ]
